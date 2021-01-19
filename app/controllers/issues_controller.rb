@@ -14,7 +14,7 @@ class IssuesController < ApplicationController
 
   def update
     @issue = Issue.find(params[:id])
-    @issue.update_attributes(name: params[:name])
+    @issue.update_attributes(checked: true)
     render json: @issue
   end
 

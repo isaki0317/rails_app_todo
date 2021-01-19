@@ -16,10 +16,6 @@ export const App = () => {
 
   const onClickAdd = () => {
     if (todoText === "") return;
-    // //未完了TODOリストに入力された値を追加して変数に格納
-    // const newTodos = [...incompleteTodos, todoText];
-    // //set関数を実行して、画面をレンダリングして値を追加
-    // setIncompleteTodos(newTodos);
     axios.post('/issues',
     { name: todoText }
     ).then(response => {
@@ -31,11 +27,16 @@ export const App = () => {
   };
 
   //削除ボタンが押された時の実行処理
-  const onClickDelete = (index) => {
-    const newTodos = [...incompleteTodos];
-    //spliceで何番目の要素を、いくつ削除するか指定
-    newTodos.splice(index, 1);
-    setIncompleteTodos(newTodos);
+  const onClickDelete = (todo_id) => {
+    axios.delete(`/issues/${todo_id}`)
+    // setIncompleteTodos(newTodos);
+    .then(response => {
+      //todo_idと一致するtodoのみreturnしない
+      setIncompleteTodos(incompleteTodos.filter(x => x.id !== todo_id))
+      console.log("set")
+    }).catch(data =>  {
+      console.log(data)
+    })
   };
 
   //完了ボタンが押された時の実行処理
@@ -81,10 +82,10 @@ export const App = () => {
         onChange={onChangeTodoText}
         onClick={onClickAdd}
         //5を超えた時点でtrueが渡る
-        disabled={incompleteTodos.length >= 20}
+        disabled={incompleteTodos.length >= 10}
       />
       {/* Todoが５個以上の場合だけ右辺が実行 */}
-      {incompleteTodos.length >= 5 && (
+      {incompleteTodos.length >= 10 && (
         <p style={{ color: "red", textAlign: "center" }}>
           登録できるtodo5個までだよ～。消化しよう!
         </p>
