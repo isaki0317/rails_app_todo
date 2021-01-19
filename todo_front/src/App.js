@@ -3,7 +3,7 @@ import axios from 'axios';
 import "./styles.css";
 import { InputTodos } from "./components/inputTodos";
 import { IncompleteTodos } from "./components/incompleteTodos";
-import { CompleteTodos, completeTodos } from "./components/completeTodos";
+import { CompleteTodos } from "./components/completeTodos";
 
 export const App = () => {
   const [todoText, setTodoText] = useState("");
@@ -40,34 +40,37 @@ export const App = () => {
   };
 
   //完了ボタンが押された時の実行処理
-  const onClickComplete = (index) => {
-    //未完了リストから削除
-    const newIncompleteTodos = [...incompleteTodos];
-    newIncompleteTodos.splice(index, 1);
-    //完成リストに値を追加して変数に格納
-    const newCompleteTodos = [...completeTodos, incompleteTodos[index]];
-    //それぞれをset関数を呼んで更新
-    setIncompleteTodos(newIncompleteTodos);
-    setCompleteTodos(newCompleteTodos);
+  const onClickComplete = (todo_id) => {
+    axios.patch(`/issues/${todo_id}`)
+    .then(response => {
+      setIncompleteTodos(incompleteTodos.filter(x => x.id !== todo_id))
+      setCompleteTodos([...completeTodos, response.data]);
+      console.log("aaa",completeTodos);
+    }).catch(data =>  {
+      console.log(data)
+    })
   };
 
   //戻すボタンが押された時の実行処理
-  const onClickBack = (index) => {
-    //完了リストから削除
-    const newCompleteTodos = [...completeTodos];
-    newCompleteTodos.splice(index, 1);
-    //未完了リストに値を追加して変数に格納
-    const newIncompleteTodos = [...incompleteTodos, completeTodos[index]];
-    //set関数を呼んで更新
-    setCompleteTodos(newCompleteTodos);
-    setIncompleteTodos(newIncompleteTodos);
+  const onClickBack = (todo_id) => {
+    axios.patch(`/issues/${todo_id}`)
+    .then(response => {
+      const newIncompleteTodos = [...incompleteTodos, response.data];
+      setCompleteTodos(completeTodos.filter(x => x.id !== todo_id))
+      setIncompleteTodos(newIncompleteTodos);
+    }).catch(data =>  {
+      console.log(data)
+    })
   };
 
   useEffect(() => {
     axios.get('/issues')
-    .then((results) => {
-      console.log(results.data)
-      setIncompleteTodos(results.data);
+    .then((response) => {
+      console.log("index/response",response.data);
+      console.log("index/incomplete",response.data.incompleteTodos);
+      setIncompleteTodos(response.data.incompleteTodos);
+      console.log("index/complete",response.data.completeTodos);
+      setCompleteTodos([...response.data.completeTodos]);
     })
     .catch((data) =>{
       console.log(data)

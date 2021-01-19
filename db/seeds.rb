@@ -7,6 +7,12 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 Issue.create([
-  {name: "おいうえお"},
-  {name: "かきくけこ"}
+  {
+    name: "おいうえお",
+    checked: false
+  },
+  {
+    name: "かきくけこ",
+    checked: true
+  }
 ])

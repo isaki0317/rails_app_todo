@@ -1,10 +1,9 @@
 class IssuesController < ApplicationController
 
   def index
-    # @complete_issues = Issue.where(checked: false)
-    # @incomplete_issues = Issue.where(checked: true)
-    @issues = Issue.all
-    render json: @issues
+    @incomplete_issues = Issue.where(checked: false)
+    @complete_issues = Issue.where(checked: true)
+    render json: {incompleteTodos: @incomplete_issues, completeTodos: @complete_issues}
   end
 
   def create
@@ -14,7 +13,11 @@ class IssuesController < ApplicationController
 
   def update
     @issue = Issue.find(params[:id])
-    @issue.update_attributes(checked: true)
+    if @issue.checked == false
+      @issue.update_attributes(checked: true)
+    else
+      @issue.update_attributes(checked: false)
+    end
     render json: @issue
   end
 
