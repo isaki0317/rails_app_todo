@@ -16,10 +16,17 @@ export const App = () => {
 
   const onClickAdd = () => {
     if (todoText === "") return;
-    //未完了TODOリストに入力された値を追加して変数に格納
-    const newTodos = [...incompleteTodos, todoText];
-    //set関数を実行して、画面をレンダリングして値を追加
-    setIncompleteTodos(newTodos);
+    // //未完了TODOリストに入力された値を追加して変数に格納
+    // const newTodos = [...incompleteTodos, todoText];
+    // //set関数を実行して、画面をレンダリングして値を追加
+    // setIncompleteTodos(newTodos);
+    axios.post('/issues',
+    { name: todoText }
+    ).then(response => {
+      console.log("registration response", response.data)
+      const newTodos = [...incompleteTodos, response.data];
+      setIncompleteTodos(newTodos);
+    })
     setTodoText("");
   };
 
@@ -74,7 +81,7 @@ export const App = () => {
         onChange={onChangeTodoText}
         onClick={onClickAdd}
         //5を超えた時点でtrueが渡る
-        disabled={incompleteTodos.length >= 5}
+        disabled={incompleteTodos.length >= 20}
       />
       {/* Todoが５個以上の場合だけ右辺が実行 */}
       {incompleteTodos.length >= 5 && (
