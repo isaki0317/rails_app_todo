@@ -1,1 +1,1 @@
-# ReactとRailsのapiモードによる開発
+
